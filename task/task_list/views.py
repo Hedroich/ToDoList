@@ -16,12 +16,13 @@ class TaskGenericApiView(GenericAPIView, ListModelMixin, CreateModelMixin):
     serializer_class = TaskSerializers
     queryset = Task.objects.all()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: str, *args: str, **kwargs: str) -> Response:
         tasks = Task.objects.filter(user_id=self.request.user.id)
         serializer = TaskSerializers(tasks, many=True)
         return Response(serializer.data)
 
-    def post(self, request, *args, **kwargs):
+
+    def post(self, request: str, *args: str, **kwargs: str) -> Response:
         return self.create(request, *args, **kwargs)
 
 
@@ -29,17 +30,17 @@ class SingleTaskApiView(RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializers
     queryset = Task.objects.all()
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request: str, *args: str, **kwargs: str) -> Response:
         tasks = Task.objects.filter(user_id=self.request.user.id) & Task.objects.filter(id=kwargs["pk"])
         serializer = TaskSerializers(tasks, many=True)
         return Response(serializer.data)
 
 
-def index(request) -> HttpResponse:
+def index(request: str) -> HttpResponse:
     return render(request, "index.html")
 
 
-def registration(request) -> HttpResponse:
+def registration(request: str) -> HttpResponse:
     if request.user.is_authenticated:
         return render(request, "index.html")
     else:
@@ -66,7 +67,7 @@ def registration(request) -> HttpResponse:
         return render(request, "registration.html", context)
 
 
-def user_login(request):
+def user_login(request: str) -> HttpResponse:
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -86,13 +87,13 @@ def user_login(request):
 
 
 @login_required
-def task_list(request) -> HttpResponse:
+def task_list(request: str) -> HttpResponse:
     tasks = Task.objects.filter(user=request.user)
     return render(request, 'tasks/task_list.html', {'tasks': tasks})
 
 
 @login_required
-def create_task(request) -> HttpResponse:
+def create_task(request: str) -> HttpResponse:
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
@@ -102,7 +103,7 @@ def create_task(request) -> HttpResponse:
 
 
 @login_required
-def complete_task(request, task_id) -> HttpResponse:
+def complete_task(request: str, task_id: int) -> HttpResponse:
     task = Task.objects.get(id=task_id)
     task.completed = not task.completed
     task.save()
@@ -110,7 +111,7 @@ def complete_task(request, task_id) -> HttpResponse:
 
 
 @login_required
-def update_task(request, task_id) -> HttpResponse:
+def update_task(request: str, task_id: int) -> HttpResponse:
     task = Task.objects.get(id=task_id)
     if request.method == 'POST':
         task = Task.objects.get(id=task_id)
@@ -125,22 +126,7 @@ def update_task(request, task_id) -> HttpResponse:
 
 
 @login_required
-def delete_task(request, task_id) -> HttpResponse:
+def delete_task(request: str, task_id: int) -> HttpResponse:
     task = Task.objects.get(id=task_id)
     task.delete()
     return redirect('task_list')
-
-
-# class TaskApiView(APIView):
-#     def get(self, request):
-#         tasks = Task.objects.filter(user=request.user)
-#         serializer = TaskSerializers(tasks, many=True)
-#         return Response(serializer.data)
-#
-#     def post(self, request):
-#         serializer = TaskSerializers(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-

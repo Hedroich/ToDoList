@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import Task
+from .models import Task, CustomUser
 
 
 class TaskSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["id", "title", "description", "created_at", "completed"]
+        fields = ["id", "user", "title", "description", "created_at", "completed"]

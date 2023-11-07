@@ -2,7 +2,6 @@ from django.urls import path
 from .views import registration, task_list, create_task, delete_task, user_login, complete_task, update_task
 from .views import TaskGenericApiView, SingleTaskApiView
 
-app_name = 'single'
 
 urlpatterns = [
     path('', task_list, name='task_list'),
