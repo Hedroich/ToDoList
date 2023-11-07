@@ -1,28 +1,27 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from .forms import CustomUserCreationForm, LoginForm
 from .models import CustomUser, Task
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
+from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import TaskSerializers
-from rest_framework import status
+
 
 
 class TaskGenericApiView(GenericAPIView, ListModelMixin, CreateModelMixin):
     serializer_class = TaskSerializers
     queryset = Task.objects.all()
 
-    def get(self, request: str, *args: str, **kwargs: str) -> Response:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> Response:
         tasks = Task.objects.filter(user_id=self.request.user.id)
         serializer = TaskSerializers(tasks, many=True)
         return Response(serializer.data)
 
 
-    def post(self, request: str, *args: str, **kwargs: str) -> Response:
+    def post(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> Response:
         return self.create(request, *args, **kwargs)
 
 
@@ -30,17 +29,17 @@ class SingleTaskApiView(RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializers
     queryset = Task.objects.all()
 
-    def retrieve(self, request: str, *args: str, **kwargs: str) -> Response:
+    def retrieve(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> Response:
         tasks = Task.objects.filter(user_id=self.request.user.id) & Task.objects.filter(id=kwargs["pk"])
         serializer = TaskSerializers(tasks, many=True)
         return Response(serializer.data)
 
 
-def index(request: str) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     return render(request, "index.html")
 
 
-def registration(request: str) -> HttpResponse:
+def registration(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return render(request, "index.html")
     else:
@@ -67,7 +66,7 @@ def registration(request: str) -> HttpResponse:
         return render(request, "registration.html", context)
 
 
-def user_login(request: str) -> HttpResponse:
+def user_login(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -87,13 +86,13 @@ def user_login(request: str) -> HttpResponse:
 
 
 @login_required
-def task_list(request: str) -> HttpResponse:
+def task_list(request: HttpRequest) -> HttpResponse:
     tasks = Task.objects.filter(user=request.user)
     return render(request, 'tasks/task_list.html', {'tasks': tasks})
 
 
 @login_required
-def create_task(request: str) -> HttpResponse:
+def create_task(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
@@ -103,7 +102,7 @@ def create_task(request: str) -> HttpResponse:
 
 
 @login_required
-def complete_task(request: str, task_id: int) -> HttpResponse:
+def complete_task(request: HttpRequest, task_id: int) -> HttpResponse:
     task = Task.objects.get(id=task_id)
     task.completed = not task.completed
     task.save()
@@ -111,7 +110,7 @@ def complete_task(request: str, task_id: int) -> HttpResponse:
 
 
 @login_required
-def update_task(request: str, task_id: int) -> HttpResponse:
+def update_task(request: HttpRequest, task_id: int) -> HttpResponse:
     task = Task.objects.get(id=task_id)
     if request.method == 'POST':
         task = Task.objects.get(id=task_id)
@@ -126,7 +125,7 @@ def update_task(request: str, task_id: int) -> HttpResponse:
 
 
 @login_required
-def delete_task(request: str, task_id: int) -> HttpResponse:
+def delete_task(request: HttpRequest, task_id: int) -> HttpResponse:
     task = Task.objects.get(id=task_id)
     task.delete()
     return redirect('task_list')
