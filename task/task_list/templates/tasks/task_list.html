@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Задачи</h2>
+  <ul>
+    {% for task in tasks %}
+      <li {% if task.completed %} style="text-decoration: line-through;"{% endif %}">
+        {{ task.title }}
+        <form method="post" action="{% url 'complete_task' task.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link">{% if task.completed %}Пометить как выполенное{% else %}Пометить как выполенное{% endif %}</button>
+        </form>
+        <form method="get" action="{% url 'update_task' task.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button class="btn btn-link">Изменить</button>
+        </form>
+        <form method="post" action="{% url 'delete_task' task.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link">Удалить</button>
+        </form>
+      </li>
+     <li>
+       {{ task.created_at }}
+     </li>
+     <li>
+      {{ task.description }}
+     </li>
+    {% empty %}
+      <li>No tasks.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

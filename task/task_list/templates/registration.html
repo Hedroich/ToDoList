@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <h1>Вы зарегистрировались</h1>
+    {%else%}
+        <h2>Введите ваши данные</h2>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            <span class="ingredient"> {{ error }} </span>
+        </form>
+    {% endif %}
+{% endblock %}
