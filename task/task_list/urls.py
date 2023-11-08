@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from .views import registration, task_list, create_task, delete_task, user_login, complete_task, update_task
-from .views import TaskGenericApiView, SingleTaskApiView
+from .api.views import TaskGenericApiView, SingleTaskApiView
 
 
 urlpatterns = [
