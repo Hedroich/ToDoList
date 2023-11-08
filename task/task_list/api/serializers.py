@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Task, CustomUser
+from ..models import Task
 
 
 class TaskSerializers(serializers.ModelSerializer):
