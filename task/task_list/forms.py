@@ -7,14 +7,14 @@ class CustomUserCreationForm(UserCreationForm):
     name = forms.CharField(max_length=50, required=True, label="Имя")
     email = forms.EmailField(max_length=50, required=True)
     password1 = forms.CharField(
-        label="Введите пороль",
+        label="Введите пароль",
         required=True,
-        widget=forms.PasswordInput(attrs={"placeholder": "Пороль более 5 символов"}),
+        widget=forms.PasswordInput(attrs={"placeholder": "Пароль более 5 символов"}),
     )
     password2 = forms.CharField(
-        label="Повторите пороль",
+        label="Повторите пароль",
         required=True,
-        widget=forms.PasswordInput(attrs={"placeholder": "Пороль более 5 символов"}),
+        widget=forms.PasswordInput(attrs={"placeholder": "Пароль более 5 символов"}),
     )
 
     class Meta:

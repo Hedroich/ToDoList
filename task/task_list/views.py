@@ -34,7 +34,7 @@ def registration(request: HttpRequest) -> HttpResponse:
             else:
                 context[
                     "error"
-                ] = "Пороли не совпадают. Либо длинна пороля меньше 5 символов"
+                ] = "Пароли не совпадают. Либо длинна пароля меньше 5 символов"
 
         return render(request, "registration.html", context)
 
